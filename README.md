@@ -6,6 +6,8 @@ guidelines. A different direction from the Latex Template available at https://g
 We will try to keep up to date with thesis requirements but some discrepancies may exist.
 Feel free to open issues and pull requests with new options, packages and fixes.
 
+> *WARNING*: Alfa version. Contributions are welcome.
+
 ## Usage
 
 Install Typst according to https://typst.app/open-source/
