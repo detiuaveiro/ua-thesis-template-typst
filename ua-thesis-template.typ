@@ -3,16 +3,17 @@
 #import "acronyms.typ"
 
 #let ua-thesis(
-  title-pt: "Indefinido",
+  title-pt: none,
   title-en: none,
-  author: "Unknown",
-  year: "",
-  degree: "Undefined Master",
-  department: "Undefined Departament",
+  author: none,
+  year: none,
+  degree: none,
+  department: none,
   theme-color: rgb("#A23223"), 
   supervisors: (),
   jury: (),
-  grant-text: none,
+  grant-text-a: none,
+  grant-text-b: none,
   dedication: none,
   abstract-pt: none,
   keywords-pt: (),
@@ -23,6 +24,13 @@
   logo: "figs/ua-logo.png",
   language: "pt",
   debug: false,
+  str_the_jury: "o júri",
+  str_acknowledgements: "agradecimentos",
+  str_ai_usage: "reconhecimento pelo uso de ferramentas de IA",
+  str_index: "Índice",
+  str_list_of_figures: "Lista de Figuras",
+  str_acronyms: "Acrónimos",
+  str_chapter: "Capítulo  ",
   body
 ) = {
   // 1. Document Metadata & Typography Setup
@@ -30,49 +38,61 @@
   
   set text(font: ("Helvetica", "Arial", "sans-serif"), size: 11pt, lang: "pt")
   
-  let clear-double-page() = pagebreak(to: "odd", weak: true)
-
+  let refName(
+    label
+  ) = {
+    show ref: it => {
+      let el = it.element
+      if el != none and el.func() == heading {
+        link(el.location(), el.body)
+      }
+    }
+    ref(label)
+  }
+  
   // ----------------------------------------------------------------------
   // 2. Cover Page (Capa)
   // ----------------------------------------------------------------------
   [
     #set page(margin: (top: 8mm, left: 15mm, right: 15mm, bottom: 10mm))
     
-    // Top Bar: 5mm visible, bleeds to right edge, aligns left with text column
-    #place(top + left, dx: 56.4mm, dy: -8mm, rect(fill: theme-color, width: 140mm, height: 5mm))
-
+    // Top Bar
+    #place(top + left, dx: 62mm, dy: -8mm, rect(fill: theme-color, width: 140mm, height: 4mm))
+    
+    // Light black bar
+    #place(top + left, dx: 62mm, dy: 0.6em, rect(fill: black, width: 140mm, height: 0.4mm))
+    #place(top + left, dx: -15mm, dy: 0.6em, rect(fill: black, width: 75mm, height: 0.4mm))
     #grid(
-      columns: (56.4mm, 124.3mm),
+      columns: (62mm, 120mm),
       rows: (50mm, 30.1mm, 145mm, 47.3mm),
-      gutter: 3pt,
+      gutter: 4pt,
       stroke:  if debug { black },
       grid.cell(
         if logo != none [
-          #place(top+right, image(logo, width: 15.8mm))
+          #place(top+right, dy: -0.5em, image(logo, width: 8mm))
         ] else [
-          #rect(width: 15.8mm, height: 15.8mm, fill: luma(240), stroke: none)[
+          #rect(width: 8mm, height: 8mm, fill: luma(240), stroke: none)[
           #align(center + horizon)[*Logo UA*]
           ]
         ]
       ),
       // Institution and Year
       grid.cell(
-        place(top + left, dy: 0.5em, text(size: 10pt, weight: "bold",  
+        place(top + left, dy: -0.2em, text(size: 10pt, weight: "bold",  
         [
-          #par("Universidade de Aveiro")
-          #par([#year])
+          Universidade de Aveiro \
+          #year
         ])
         )
       ),
-
       // Author
       grid.cell(
-        text(size: 14pt, weight: "bold", 
-        author)
+        place(top + left,
+          text(size: 14pt, weight: "bold", [#author])
+        )
       ),
-      
       grid.cell(
-        place(top + left, dy: 0.5em, 
+        place(top + left, 
           text(size: 14pt, weight: "bold", 
           
           if title-en != none [
@@ -94,7 +114,7 @@
     #set page(margin: (top: 8mm, left: 15mm, right: 15mm, bottom: 10mm))
     
     #grid(
-      columns: (56.4mm, 124.3mm),
+      columns: (62mm, 120mm),
       rows: (50mm, 30.1mm, 145mm, 47.3mm),
       gutter: 3pt,
       stroke: if debug { black },
@@ -109,10 +129,9 @@
       ),
       // Institution and Year
       grid.cell(x: 1, y: 0,
-        place(top + left, dy: 0.5em, text(size: 10pt, weight: "bold",  
+        place(top + left, dy: 1em, text(size: 10pt, weight: "bold",  
         [
-          #par("Universidade de Aveiro")
-          #par([#year])
+          Universidade de Aveiro \ #year
         ])
         )
       ),
@@ -125,7 +144,7 @@
 
       // Title
       grid.cell(x: 1, y: 1,
-        place(top + left, dy: 0.5em, 
+        place(top + left, 
           text(size: 14pt, weight: "bold", 
           
           if title-en != none [
@@ -150,10 +169,21 @@
       ),
       // Grant
       grid.cell(x: 1, y: 3,
-        if grant-text != none [
-            #v(1.5em)
-            #text(size: 10pt,[#grant-text])
+         grid(
+          columns: (50%, 50%),
+          rows: (47mm, 47mm),
+          stroke: if debug { black },      
+          if grant-text-a != none [
+            #grid.cell(x: 0, y: 0,
+              text(size: 10pt,[#grant-text-a])
+            )
+          ],
+          if grant-text-b != none [
+            #grid.cell(x: 1, y: 0,
+              text(size: 10pt,[#grant-text-b])
+            )
           ]
+         )
       )
     )
   ]
@@ -165,7 +195,7 @@
     #set page(margin: (top: 8mm, left: 15mm, right: 15mm, bottom: 10mm))
     
     #grid(
-      columns: (56.4mm, 124.3mm),
+      columns: (60mm, 124mm),
       rows: (50mm, 30.1mm, 145mm, 47.3mm),
       stroke: if debug { black },      
       grid.cell(x: 1, y: 2,
@@ -187,10 +217,11 @@
       rows: (74.638mm, 8.1mm, 16mm, 16mm, 16mm, 16mm, 16mm, 16mm, 16mm, 16mm, 16mm, 16mm),
       stroke: if debug { black },
       grid.cell(""),grid.cell(""),
-      grid.cell(text(size: 11pt, weight: "bold", "o júri")),grid.cell(""),
+      grid.cell(
+        text(size: 11pt, weight: "bold", str_the_jury)),grid.cell(""),
       ..jury.map(j => (
-        align(left)[#j.role], 
-        align(left)[#j.name \ #text(size: 8pt)[#j.title]]
+        align(left)[#text(size: 10pt, j.role)], 
+        align(left)[#text(size: 10pt,j.name) \ #text(size: 8pt)[#j.title]]
       )).flatten()
     )
   
@@ -205,7 +236,7 @@
       columns: (56.4mm, 124.3mm),
       rows: (74.638mm, auto),
       stroke: if debug { black },
-      grid.cell(x: 0, y: 1, text(size: 11pt, weight: "bold",[acknowledgement])),
+      grid.cell(x: 0, y: 1, text(size: 11pt, weight: "bold",[#str_acknowledgements])),
       grid.cell(x: 1, y: 1, text(size: 10pt, par(justify: true, first-line-indent: 1.5em, leading: 0.8em,[#acknowledgements]))
       ),
     )
@@ -257,7 +288,7 @@
       columns: (56.4mm, 124.3mm),
       rows: (74.638mm, 23.8mm, auto),
       stroke: if debug { black },
-      grid.cell(x: 0, y: 2, text(size: 11pt, weight: "bold",[acknowledgement of use of \ AI tools])),
+      grid.cell(x: 0, y: 2, text(size: 11pt, weight: "bold", str_ai_usage)),
       grid.cell(x: 1, y: 2, text(size: 10pt, [
         *Recognition of the use of generative Artificial Intelligence technologies and tools, software and other support tools.*
         #v(1em)
@@ -281,7 +312,7 @@
       columns: (56.4mm, 124.3mm),
       rows: (74.638mm, auto),
       stroke: if debug { black },
-      grid.cell(x: 0, y: 2, text(size: 11pt, weight: "bold",[Índice])),
+      grid.cell(x: 0, y: 2, text(size: 11pt, weight: "bold",str_index)),
       grid.cell(x: 1, y: 2, text(size: 10pt, [
         #outline(title: none, depth: 3, indent: auto)
         ])
@@ -298,7 +329,7 @@
       columns: (56.4mm, 124.3mm),
       rows: (74.638mm, auto),
       stroke: if debug { black },
-      grid.cell(x: 0, y: 2, text(size: 11pt, weight: "bold",[Lista de Figuras])),
+      grid.cell(x: 0, y: 2, text(size: 11pt, weight: "bold",str_list_of_figures)),
       grid.cell(x: 1, y: 2, text(size: 10pt, [
         #outline(title: none, depth: 3, indent: auto, target: figure.where(kind: image))
         ])
@@ -315,7 +346,7 @@
       columns: (56.4mm, 124.3mm),
       rows: (74.638mm, auto),
       stroke: if debug { black },
-      grid.cell(x: 0, y: 2, text(size: 11pt, weight: "bold",[Acrónimos])),
+      grid.cell(x: 0, y: 2, text(size: 11pt, weight: "bold",str_acronyms)),
       grid.cell(x: 1, y: 2, text(size: 10pt, [
         //#print-index()
         ])
@@ -333,12 +364,11 @@
       numbering: "1", 
       number-align: center
     )
-    #clear-double-page()
     #counter(page).update(1)
     
     #set text( 
       size: 11pt,
-      font: "Noto Serif",
+      font: "New Computer Modern",
       lang: language,
     )
     #set par(
@@ -348,13 +378,44 @@
       spacing: 1.5em
     )
     #set heading(numbering: "1.1")
+
+    // Chapter style 
+    #show heading.where(level: 1): it => {
+      pagebreak(to: "even", weak: true)
+      v(15%)
+
+      // 2. Extract the chapter number safely
+      let num = if it.numbering != none {
+        counter(heading).display(it.numbering)
+      } else {
+        ""
+      }
+      pad(right: -30mm,
+        align(right)[
+          #block(width: auto)[
+            #set align(left)
+            #grid(
+              columns: (auto, auto, auto),
+              align: bottom,
+              column-gutter: 12pt,
+              text(size: 18pt, tracking: 1.5pt)[#smallcaps[#str_chapter]],
+              text(size: 60pt)[#num],
+              rect(width: 10pt, height: 45pt, fill: black)
+            )
+          ]
+        ]
+      )
+      v(0.5em)
+      align(right, text(size: 26pt, weight: "bold")[#it.body])
+    }
     
+    #show heading.where(level: 1): set heading(supplement: [#str_chapter])
+
     // Spacing and sizing around body headings
     #show heading: it => {
       if it.level == 1 {
-        pagebreak(to: "odd", weak: true)
         v(2em)
-        text(size: 20pt, weight: "bold", it)
+        align(right,  it)
         v(1.5em)
       } else if it.level == 2 {
         v(1.5em)

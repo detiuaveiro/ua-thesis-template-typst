@@ -5,48 +5,75 @@
 
 // 1. Initialize the Template
 #show: ua-thesis.with(
-  title-pt: "Title PT",
-  title-en: "Title EN",
-  author: "Author Name",
+  title-pt: "Título da Tese em Português (MÁXIMO 130 CARACTERES)",
+  title-en: "Thesis Title in English (MAX 130 CHARACTERS)",
+  author: "NOME COMPLETO",
   year: "2026",
   degree: "Mestrado em X",
   department: "DEPARTAMENTO",
   logo: "figs/ua-logo.png",
-  
+  //str_the_jury: "the jury",
+  //str_acknowledgements: "acknowledgments",
+  //str_ai_usage: "acknowledgement of the use of AI tools",
+  //str_index: "Index"
   supervisors: (
     "Prof. Dr. A", 
     "Prof. Dra. B"
   ),
   
   jury: (
-    (role: "Presidente", name: "Prof. Dr. A", title: "Professor Catedrático da Universidade de Aveiro"),
-    (role: "Vogal", name: "Prof. Dr. B", title: "Professor Associado da X"),
-    (role: "Orientador", name: "Prof. Dr. A", title: "Professor Auxiliar da Universidade de Aveiro")
+    (role: "presidente", name: "Prof. Dr. A", title: "Professor Catedrático da Universidade de Aveiro"),
+    (role: "vogais", name: "Prof. Dr. B", title: "Professor Associado da X"),
+    (role: "", name: "Prof. Dr. A", title: "Professor Auxiliar da Universidade de Aveiro")
   ),
 
-  grant-text: [
-    Text: Apoio financeiro do POCTI no âmbito do III Quadro Comunitário de Apoio.
-    (if applicable- Portuguese mandatory)
+  grant-text-a: [
+   texto Apoio financeiro do POCTI no âmbito do III Quadro Comunitário de Apoio.
+   (se aplicável)
   ],
-
+  grant-text-b: [
+    texto Apoio financeiro da FCT e do FSE no âmbito do III Quadro Comunitário de Apoio.
+    (se aplicável)
+  ],
   acknowledgements: [
-    Gostaria de expressar a minha profunda gratidão aos meus orientadores e à Universidade de Aveiro 
-    por todo o apoio prestado durante a elaboração desta dissertação. 
-    O meu muito obrigado à minha família e amigos pelo suporte constante.
+    Agradeço toda a ajuda a todos os meus colegas e companheiros.
+  Agradeço a todos os que contribuiram para o modelo de Typst usado neste trabalho:\ \
+  https://github.com/detiuaveiro/ua-thesis-template-typst
   ],
 
   keywords-pt: ("Typst", "Tese", "Universidade de Aveiro"),
   abstract-pt: [
-    Text
+    Um resumo é um pequeno apanhado de um trabalho mais longo (como
+uma tese, dissertação ou trabalho de pesquisa). O resumo relata de
+forma concisa os objetivos e resultados da sua pesquisa, para que os
+leitores saibam exatamente o que se aborda no seu documento.
+Embora a estrutura possa variar um pouco dependendo da sua área de
+estudo, o seu resumo deve descrever o propósito do seu trabalho, os
+métodos que você usou e as conclusões a que chegou.
+Uma maneira comum de estruturar um resumo é usar a estrutura IMRaD.
+Isso significa: Introdução, Métodos, Resultados, Discussão. Veja mais
+pormenores aqui:\ 
+https://www.scribbr.com/dissertation/abstract/
   ],
 
   keywords-en: ("Typst", "Thesis", "University of Aveiro"),
   abstract-en: [
-    Text
+    An abstract is a short summary of a longer work (such as a thesis,
+dissertation or research paper).
+The abstract concisely reports the aims and outcomes of your research,
+so that readers know exactly what your paper is about.
+Although the structure may vary slightly depending on your discipline,
+your abstract should describe the purpose of your work, the methods
+you’ve used, and the conclusions you’ve drawn.
+One common way to structure your abstract is to use the IMRaD structure.
+This stands for: Introduction, Methods, Results, Discussion. Check for
+more details here:\ 
+https://www.scribbr.com/dissertation/abstract/
   ],
 
-  dedication: [ Dedication (Optional)],
-
+  dedication: [ texto Dedico este trabalho à minha esposa e filho pelo incansável apoio.
+  (opcional)
+  ],
   ai-acknowledgement: [
      I acknowledge the use of [insert AI system(s) and link] to [specific use of generative artificial intelligence or other tasks]. I acknowledge the use of [software, codes or platforms] to [specific use software, codes or platforms or to other tasks].
 
@@ -60,13 +87,37 @@
 // 2. Main Content Starts Here
 // -----------------------------------------------------------------------------
 
-= Introdução
-A Universidade de Aveiro (UA) possui diretrizes específicas de formatação gráfica para dissertações de mestrado e teses de doutoramento. 
 
-== Motivação
-A escrita de uma tese não deve ser atrasada por erros enigmáticos de compilação ou incompatibilidade de pacotes. 
-O Typst utiliza conceitos inspirados no Markdown, permitindo que o foco permaneça inteiramente na pesquisa científica.
+#include("chapters/chapter1.typ")
+#include("chapters/chapter2.typ")
+#include("chapters/chapter-conclusions.typ")
 
+// -----------------------------------------------------------------------------
+// 3. Bibliography
+// -----------------------------------------------------------------------------
 
-= Conclusão
-O Typst demonstrou ser extremamente capaz de replicar a estrutura complexa da capa, folha de rosto e páginas de metadados exigidas pelas normas da Universidade de Aveiro, mantendo o ficheiro de template num formato facilmente legível em comparação com a tradicional complexidade de um ficheiro `.sty`.
+#show heading.where(level: 1): it => {
+    pagebreak(to: "even", weak: true)
+    v(15%)
+
+    pad(right: -30mm,
+      align(right)[
+        #block(width: auto)[
+          #set align(left)
+          #grid(
+            columns: (auto, auto, auto),
+            align: bottom,
+            column-gutter: 12pt,
+            text(size: 18pt, tracking: 1.5pt)[],
+            text(size: 60pt)[],
+            rect(width: 10pt, height: 45pt, fill: black)
+          )
+        ]
+      ]
+    )
+    v(0.5em)
+    align(right, text(size: 26pt, weight: "bold")[Bibliografia])
+  }
+    
+#bibliography("bib/references.bib")
+
